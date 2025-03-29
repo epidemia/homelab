@@ -17,7 +17,7 @@ services:
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
   pihole:
     container_name: pihole
-    image: pihole/pihole:latest
+    image: pihole/pihole:2025.03.0
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -33,7 +33,7 @@ services:
       - "traefik.http.services.pihole.loadbalancer.server.port=80"
   stirling:
     container_name: stirling
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:0.45.0
     volumes:
       - /srv/docker/stirling-pdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
       - /srv/docker/stirling-pdf/extraConfigs:/configs
