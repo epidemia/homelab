@@ -1,0 +1,23 @@
+services:
+  traefik:
+    container_name: traefik
+    image: traefik:v3.3
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.home`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+
+networks:
+  homelab:
+    driver: bridge

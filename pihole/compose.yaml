@@ -1,0 +1,23 @@
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:2025.03.0
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    environment:
+      TZ: "Europe/Amsterdam"
+      FTLCONF_dns_listeningMode: "all"
+    volumes:
+      - "/srv/docker/pihole:/etc/pihole"
+    restart: unless-stopped
+    networks:
+      - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.home`)"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+
+networks:
+  homelab:
+    external: true
