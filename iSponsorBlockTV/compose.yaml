@@ -1,0 +1,7 @@
+services:
+  iSponsorBlockTV:
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    container_name: iSponsorBlockTV
+    restart: unless-stopped
+    volumes:
+      - /srv/docker/iSponsorBlockTV:/app/data
