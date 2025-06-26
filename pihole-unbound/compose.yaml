@@ -12,7 +12,7 @@ services:
       FTLCONF_dns_dnssec: "true"
     volumes:
       - "/srv/docker/pihole:/etc/pihole"
-      - "/srv/docker/unbound:/etc/dnsmasq.d"
+      - "/srv/docker/pihole/dnsmasq:/etc/dnsmasq.d"
     restart: unless-stopped
     networks:
       - homelab
