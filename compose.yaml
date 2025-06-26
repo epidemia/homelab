@@ -1,5 +1,6 @@
 include:
   - pihole/compose.yaml
+  - pihole-unbound/compose.yaml
   - stirling/compose.yaml
   - traefik/compose.yaml
   
