@@ -15,8 +15,8 @@ services:
       - homelab
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.pihole.rule=Host(`pihole-unbound.home`)"
-      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole-unbound.rule=Host(`pihole-unbound.home`)"
+      - "traefik.http.services.pihole-unbound.loadbalancer.server.port=80"
 
 networks:
   homelab:
