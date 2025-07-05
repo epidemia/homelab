@@ -1,5 +1,6 @@
 services:
   miniflux:
+    container_name: miniflux
     image: miniflux/miniflux:2.2.10
     depends_on:
       db:
@@ -7,9 +8,6 @@ services:
     environment:
       - DATABASE_URL=postgres://${MINIFLUX_POSTGRES_USER}:${MINIFLUX_POSTGRES_PASSWORD}@db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1
-      - CREATE_ADMIN=1
-      - ADMIN_USERNAME=${MINIFLUX_ADMIN_USERNAME}
-      - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASSWORD}
     restart: unless-stopped
     networks:
       - homelab
@@ -18,6 +16,7 @@ services:
       - "traefik.http.routers.miniflux.rule=Host(`miniflux.home`)"
       - "traefik.http.services.miniflux.loadbalancer.server.port=8080"
   db:
+    container_name: miniflux-db
     image: postgres:17-alpine
     environment:
       - POSTGRES_USER=${MINIFLUX_POSTGRES_USER}
