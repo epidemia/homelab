@@ -2,9 +2,6 @@ services:
   mazanoke:
     container_name: mazanoke
     image: ghcr.io/civilblur/mazanoke:v1.1.5
-    depends_on:
-      traefik:
-        condition: service_healthy
     restart: unless-stopped
     networks:
       - homelab

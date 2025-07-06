@@ -2,9 +2,6 @@ services:
   stirling:
     container_name: stirling
     image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:0.46.2
-    depends_on:
-      traefik:
-        condition: service_healthy
     volumes:
       - /srv/docker/stirling-pdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
       - /srv/docker/stirling-pdf/extraConfigs:/configs
