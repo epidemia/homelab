@@ -3,3 +3,4 @@ include:
   - stirling/compose.yaml
   - traefik/compose.yaml
   - miniflux/compose.yaml
+  - mazanoke/compose.yaml
