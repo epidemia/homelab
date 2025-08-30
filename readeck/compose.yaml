@@ -1,52 +1,47 @@
 services:
   readeck:
-    image: codeberg.org/readeck/readeck:0.20.0
     container_name: readeck
+    image: codeberg.org/readeck/readeck:0.20.0
     depends_on:
       db:
         condition: service_healthy
-        restart: true
     environment:
       - READECK_DATABASE_SOURCE=postgres://${READECK_POSTGRES_USER}:${READECK_POSTGRES_PASSWORD}@db/readeck?sslmode=disable
       - READECK_LOG_LEVEL=info
       - READECK_SERVER_HOST=0.0.0.0
       - READECK_SERVER_PORT=8000
     volumes:
-      - "/srv/docker/readeck:/readeck"
+      - /srv/docker/readeck:/readeck
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "/bin/readeck", "healthcheck", "-config", "config.toml"]
-      interval: 30s
-      timeout: 2s
-      retries: 3
     networks:
       - homelab
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.readeck.rule=Host(`readeck.home`)"
-      - "traefik.http.services.readeck.loadbalancer.server.port=8080"
-  readeck-db:
-    image: postgres:17-alpine
+      - "traefik.http.services.readeck.loadbalancer.server.port=8000"
+    healthcheck:
+      test: ["CMD", "/bin/readeck", "healthcheck", "-config", "config.toml"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+
+  db:
     container_name: readeck-db
+    image: postgres:17-alpine
     environment:
-      - POSTGRES_DB=readeck
       - POSTGRES_USER=${READECK_POSTGRES_USER}
       - POSTGRES_PASSWORD=${READECK_POSTGRES_PASSWORD}
+      - POSTGRES_DB=readeck
     volumes:
-      - readeck-db:/var/lib/postgresql/data
-    restart: unless-stopped
+      - /srv/docker/readeck-db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
-      interval: 30s
-      timeout: 60s
-      retries: 5
-      start_period: 80s
+      test: ["CMD", "pg_isready", "-U", "${READECK_POSTGRES_USER}"]
+      interval: 10s
+      start_period: 30s
+    restart: unless-stopped
     networks:
       - homelab
 
-volumes:
-  readeck-db:
-    
 networks:
   homelab:
     external: true

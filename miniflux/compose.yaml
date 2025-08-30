@@ -25,7 +25,7 @@ services:
     volumes:
       - miniflux-db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      test: ["CMD", "pg_isready", "-U", "${MINIFLUX_POSTGRES_USER}"]
       interval: 10s
       start_period: 30s
     restart: unless-stopped
