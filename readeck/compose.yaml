@@ -1,0 +1,52 @@
+services:
+  readeck:
+    image: codeberg.org/readeck/readeck:0.20
+    container_name: readeck
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    environment:
+      - READECK_DATABASE_SOURCE=postgres://${READECK_POSTGRES_USER}:${READECK_POSTGRES_PASSWORD}@readeck-db:5432/readeck
+      - READECK_LOG_LEVEL=info
+      - READECK_SERVER_HOST=0.0.0.0
+      - READECK_SERVER_PORT=8000
+    volumes:
+      - "/srv/docker/readeck:/readeck"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/bin/readeck", "healthcheck", "-config", "config.toml"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+    networks:
+      - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.readeck.rule=Host(`readeck.home`)"
+      - "traefik.http.services.readeck.loadbalancer.server.port=8080"
+  db:
+    image: postgres:17
+    container_name: readeck-db
+    environment:
+      - POSTGRES_DB=readeck
+      - POSTGRES_USER=${READECK_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${READECK_POSTGRES_PASSWORD}
+    volumes:
+      - readeck-db:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    networks:
+      - homelab
+
+volumes:
+  readeck-db:
+    
+networks:
+  homelab:
+    external: true
