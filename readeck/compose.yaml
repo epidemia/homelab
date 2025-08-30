@@ -25,7 +25,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.readeck.rule=Host(`readeck.home`)"
       - "traefik.http.services.readeck.loadbalancer.server.port=8080"
-  db:
+  readeck-db:
     image: postgres:17
     container_name: readeck-db
     environment:
