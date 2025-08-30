@@ -3,10 +3,10 @@ services:
     container_name: miniflux
     image: miniflux/miniflux:2.2.12
     depends_on:
-      db:
+      miniflux-db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgres://${MINIFLUX_POSTGRES_USER}:${MINIFLUX_POSTGRES_PASSWORD}@db/miniflux?sslmode=disable
+      - DATABASE_URL=postgres://${MINIFLUX_POSTGRES_USER}:${MINIFLUX_POSTGRES_PASSWORD}@miniflux-db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1
     restart: unless-stopped
     networks:
@@ -15,7 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.miniflux.rule=Host(`miniflux.home`)"
       - "traefik.http.services.miniflux.loadbalancer.server.port=8080"
-  db:
+  miniflux-db:
     container_name: miniflux-db
     image: postgres:17-alpine
     environment:
