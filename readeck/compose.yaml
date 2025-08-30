@@ -1,6 +1,6 @@
 services:
   readeck:
-    image: codeberg.org/readeck/readeck:0.20
+    image: codeberg.org/readeck/readeck:0.20.0
     container_name: readeck
     depends_on:
       db:
