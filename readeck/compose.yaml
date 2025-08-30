@@ -7,7 +7,7 @@ services:
         condition: service_healthy
         restart: true
     environment:
-      - READECK_DATABASE_SOURCE=postgres://${READECK_POSTGRES_USER}:${READECK_POSTGRES_PASSWORD}@readeck-db:5432/readeck
+      - READECK_DATABASE_SOURCE=postgres://${READECK_POSTGRES_USER}:${READECK_POSTGRES_PASSWORD}@db/readeck?sslmode=disable
       - READECK_LOG_LEVEL=info
       - READECK_SERVER_HOST=0.0.0.0
       - READECK_SERVER_PORT=8000
@@ -26,7 +26,7 @@ services:
       - "traefik.http.routers.readeck.rule=Host(`readeck.home`)"
       - "traefik.http.services.readeck.loadbalancer.server.port=8080"
   readeck-db:
-    image: postgres:17
+    image: postgres:17-alpine
     container_name: readeck-db
     environment:
       - POSTGRES_DB=readeck
