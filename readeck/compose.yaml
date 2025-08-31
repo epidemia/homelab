@@ -1,15 +1,14 @@
 services:
   readeck:
     container_name: readeck
-    image: codeberg.org/readeck/readeck:0.20.0
+    image: codeberg.org/readeck/readeck:0.19.2
     depends_on:
       readeck-db:
         condition: service_healthy
     environment:
       - READECK_DATABASE_SOURCE=postgres://${READECK_POSTGRES_USER}:${READECK_POSTGRES_PASSWORD}@readeck-db/readeck?sslmode=disable
-      - READECK_LOG_LEVEL=info
-      - READECK_SERVER_HOST=0.0.0.0
-      - READECK_SERVER_PORT=8000
+      - READECK_LOG_LEVEL=warn
+      - READECK_LOG_FORMAT=text
     volumes:
       - /srv/docker/readeck:/readeck
     restart: unless-stopped
