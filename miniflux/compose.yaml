@@ -15,6 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.miniflux.rule=Host(`miniflux.home`)"
       - "traefik.http.services.miniflux.loadbalancer.server.port=8080"
+      
   miniflux-db:
     container_name: miniflux-db
     image: postgres:17-alpine
