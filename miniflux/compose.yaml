@@ -15,7 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.miniflux.rule=Host(`miniflux.home`)"
       - "traefik.http.services.miniflux.loadbalancer.server.port=8080"
-      
+
   miniflux-db:
     container_name: miniflux-db
     image: postgres:17-alpine
@@ -24,7 +24,7 @@ services:
       - POSTGRES_PASSWORD=${MINIFLUX_POSTGRES_PASSWORD}
       - POSTGRES_DB=miniflux
     volumes:
-      - miniflux-db:/var/lib/postgresql/data
+      - /srv/docker/miniflux-db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${MINIFLUX_POSTGRES_USER}"]
       interval: 10s
@@ -32,9 +32,6 @@ services:
     restart: unless-stopped
     networks:
       - homelab
-
-volumes:
-  miniflux-db:
 
 networks:
   homelab:
