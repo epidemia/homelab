@@ -9,6 +9,11 @@ services:
       - DATABASE_URL=postgres://${MINIFLUX_POSTGRES_USER}:${MINIFLUX_POSTGRES_PASSWORD}@miniflux-db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     networks:
       - homelab
     labels:
