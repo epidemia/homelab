@@ -18,11 +18,6 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.readeck.rule=Host(`readeck.home`)"
       - "traefik.http.services.readeck.loadbalancer.server.port=8000"
-    healthcheck:
-      test: ["CMD", "/bin/readeck", "healthcheck", "-config", "config.toml"]
-      interval: 30s
-      timeout: 2s
-      retries: 3
 
   readeck-db:
     container_name: readeck-db

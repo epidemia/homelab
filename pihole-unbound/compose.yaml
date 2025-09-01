@@ -14,22 +14,6 @@ services:
       - "/srv/docker/pihole:/etc/pihole"
       - "/srv/docker/pihole/dnsmasq:/etc/dnsmasq.d"
     restart: unless-stopped
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "dig",
-          "+norecurse",
-          "+retry=0",
-          "@127.0.0.1",
-          "pi.hole",
-          "||",
-          "exit",
-          "1",
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
     networks:
       - homelab
     labels:
