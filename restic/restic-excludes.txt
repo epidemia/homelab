@@ -1,0 +1,3 @@
+# Exclude raw Postgres data (we take only logical dumps)
+ /srv/docker/**/postgres*/data/**
+ /srv/docker/**/pgdata/**

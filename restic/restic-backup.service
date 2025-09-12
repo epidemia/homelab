@@ -1,0 +1,14 @@
+[Unit]
+Description=Nightly restic backup (Cloudflare R2 / S3)
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/restic/restic.env
+ExecStart=/usr/local/bin/restic-backup.sh
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+# Don't kill restic on slow networks
+TimeoutStartSec=12h
