@@ -1,7 +1,7 @@
 services:
   miniflux:
     container_name: miniflux
-    image: miniflux/miniflux:2.2.12
+    image: miniflux/miniflux:2.2.13
     depends_on:
       miniflux-db:
         condition: service_healthy

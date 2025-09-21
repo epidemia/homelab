@@ -25,7 +25,7 @@ echo "[$(date -Is)] Starting backup…"
 OVERRIDES="/etc/restic/pg-credentials.map"   # lines: <container> <user> <password>
 PG_LOG_BASE="$LOG_DIR"
 
-# 1) Контейнеры: из PG_CONTAINERS или autodiscover по образу
+# 1) Containers: from PG_CONTAINERS or autodiscover by image
 if [ -n "${PG_CONTAINERS:-}" ]; then
   CONTAINERS=$PG_CONTAINERS
 else
@@ -37,7 +37,7 @@ for c in $CONTAINERS; do
   echo "[$(date -Is)] Dumping Postgres (per-db) from container: $c"
   LOG="$PG_LOG_BASE/pgdump-${c}-$DATE.log"
 
-  # 2) Берём креды: overrides -> env -> defaults
+  # 2) Get credentials: overrides -> env -> defaults
   OV_USER=""; OV_PASS=""
   if [ -f "$OVERRIDES" ]; then
     read -r OV_USER OV_PASS < <(awk -v n="$c" '$1==n {print $2, $3; exit}' "$OVERRIDES" 2>/dev/null || true)
@@ -51,7 +51,7 @@ for c in $CONTAINERS; do
     | tail -n1)
   [ -n "$OV_USER" ] || OV_USER="postgres"
 
-  # 3) Ждём готовность (до 30 сек)
+  # 3) Wait for readiness (up to 30 sec)
   READY=0
   for i in 1 2 3 4 5 6; do
     if [ -n "$OV_PASS" ]; then
@@ -66,7 +66,7 @@ for c in $CONTAINERS; do
     continue
   fi
 
-  # 4) Дамп глобалей (роли/таблспейсы) — один файл на контейнер
+  # 4) Dump globals (roles/tablespaces) — one file per container
   if [ -n "$OV_PASS" ]; then
     docker exec -i -e PGPASSWORD="$OV_PASS" "$c" sh -lc "pg_dumpall --globals-only -U '$OV_USER'" \
       | gzip > "$PG_DUMPS/${c}-globals-$DATE.sql.gz" 2>>"$LOG" || echo "[$(date -Is)] WARNING: globals dump failed for $c" | tee -a "$LOG" >&2
@@ -75,7 +75,7 @@ for c in $CONTAINERS; do
       | gzip > "$PG_DUMPS/${c}-globals-$DATE.sql.gz" 2>>"$LOG" || echo "[$(date -Is)] WARNING: globals dump failed for $c" | tee -a "$LOG" >&2
   fi
 
-  # 5) Список «не-template» баз
+  # 5) List of non-template databases
   if [ -n "$OV_PASS" ]; then
     DBS=$(docker exec -e PGPASSWORD="$OV_PASS" "$c" sh -lc \
       "psql -U '$OV_USER' -At -c \"SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY 1\"")
@@ -84,9 +84,9 @@ for c in $CONTAINERS; do
       "psql -U '$OV_USER' -At -c \"SELECT datname FROM pg_database WHERE datistemplate = false ORDER BY 1\"")
   fi
 
-  # 6) Дамп каждой базы отдельно (plain SQL)
+  # 6) Dump each database separately (plain SQL)
   for db in $DBS; do
-    # Можно пропустить служебную 'postgres' при желании: if [ "$db" = "postgres" ]; then continue; fi
+    # Can skip the service 'postgres' database if desired: if [ "$db" = "postgres" ]; then continue; fi
     OUT="$PG_DUMPS/${c}-${db}-$DATE.sql.gz"
     echo "[$(date -Is)]  -> $db"
     if [ -n "$OV_PASS" ]; then
