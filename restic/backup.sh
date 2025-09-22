@@ -4,6 +4,7 @@
 # - Backs up /srv/docker + /srv/backups/pg
 # - Keeps only today's dumps locally (configurable)
 # - Keeps only the last N restic snapshots (default 2)
+# - Verifies the snapshot: light repo check + end-to-end test by reading new dumps from the latest snapshot
 
 set -euo pipefail
 
@@ -42,6 +43,12 @@ echo "[$(date -Is)] Starting backup…"
 
 # How many last restic snapshots to keep in the repo
 : "${RESTIC_KEEP_LAST:=2}"
+
+# Verification knobs:
+# Read-data subset for restic check after backup (empty to disable). Example: "1/20" (~5%), "1/50" (~2%), "1/5" (20%)
+: "${VERIFY_READ_DATA_SUBSET:=1/20}"
+# How many new dumps to test end-to-end by reading them from the latest snapshot and CRC-checking with zcat -t
+: "${VERIFY_SNAPSHOT_SAMPLES:=2}"
 
 # Path to per-container credential overrides (one line: <container> <user> <password>)
 OVERRIDES="/etc/restic/pg-credentials.map"   # chmod 600, root:root
@@ -176,8 +183,34 @@ restic $RESTIC_OPTIONS forget --keep-last "$RESTIC_KEEP_LAST"
 echo "[$(date -Is)] Restic prune…"
 restic $RESTIC_OPTIONS prune
 
-# Light integrity check weekly (Sunday)
+# --- Snapshot verification ----------------------------------------------------
+
+# 1) Light integrity check by reading a subset of data from the repo (optional)
+if [ -n "${VERIFY_READ_DATA_SUBSET:-}" ]; then
+  echo "[$(date -Is)] Restic check (read-data-subset=${VERIFY_READ_DATA_SUBSET})…"
+  restic $RESTIC_OPTIONS check --read-data-subset="${VERIFY_READ_DATA_SUBSET}" || true
+fi
+
+# 2) End-to-end test: read a couple of today's dumps from the latest snapshot and CRC-check them with zcat -t
+#    This proves we can read and decrypt data from the repo, not just local files.
+SAMPLES=()
+# pick up to VERIFY_SNAPSHOT_SAMPLES files created this run
+while IFS= read -r f; do SAMPLES+=("$f"); done < <(ls -1t "$PG_DUMPS"/*-"$DATE".sql.gz 2>/dev/null | head -n "${VERIFY_SNAPSHOT_SAMPLES}")
+if [ "${#SAMPLES[@]}" -gt 0 ]; then
+  echo "[$(date -Is)] Snapshot E2E verification on ${#SAMPLES[@]} dump(s)…"
+  for f in "${SAMPLES[@]}"; do
+    snap_path="${f}"  # path inside the snapshot is the same absolute path
+    echo "[$(date -Is)]  -> verifying $(basename "$f")"
+    # Read the file from the latest snapshot and test gzip CRC on the stream.
+    # If anything is corrupt, zcat -t will return non-zero and the script will fail due to set -e.
+    restic $RESTIC_OPTIONS dump latest "$snap_path" | zcat -t - >/dev/null 2>&1
+  done
+else
+  echo "[$(date -Is)] NOTE: no new dumps found for E2E verification (skipping)"
+fi
+
+# Weekly light integrity check (structure only) as a bonus
 if [ "$(date +%u)" = "7" ]; then
-  echo "[$(date -Is)] Restic check…"
+  echo "[$(date -Is)] Restic check (structure)…"
   restic $RESTIC_OPTIONS check || true
 fi
