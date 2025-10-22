@@ -1,7 +1,7 @@
 services:
   stirling:
     container_name: stirling
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:1.3.2
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:1.5.0
     volumes:
       - /srv/docker/stirling-pdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
       - /srv/docker/stirling-pdf/extraConfigs:/configs
@@ -17,6 +17,7 @@ services:
       - UI_APP_NAME=Stirling PDF
       - UI_HOME_DESCRIPTION=Your locally hosted one-stop-shop for all your PDF needs.
       - UI_APP_NAVBAR_NAME=Stirling PDF
+      - SYSTEM_ENABLEANALYTICS=false
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.stirling.rule=Host(`stirling.home`)"
