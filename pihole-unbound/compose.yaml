@@ -1,7 +1,7 @@
 services:
   pihole-unbound:
     container_name: pihole-unbound
-    image: mpgirro/pihole-unbound:2025.08.0
+    image: mpgirro/pihole-unbound:2025.10.3
     ports:
       - "53:53/tcp"
       - "53:53/udp"
