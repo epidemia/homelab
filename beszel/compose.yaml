@@ -4,6 +4,9 @@ services:
     image: henrygd/beszel:0.15.4
     volumes:
       - /srv/docker/beszel:/beszel_data
+      - /srv/docker/beszel-socket:/beszel_socket
+    ports:
+      - "8090:8090"
     restart: unless-stopped
     networks:
       - homelab
@@ -17,16 +20,17 @@ services:
     image: henrygd/beszel-agent:0.15.4
     depends_on:
       - beszel
+    network_mode: host
     environment:
       - KEY=${BESZEL_AGENT_KEY}
       - TOKEN=${BESZEL_AGENT_TOKEN}
-      - HUB_URL=http://beszel:8090
+      - HUB_URL=http://localhost:8090
+      - LISTEN=/beszel_socket/beszel.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /srv/docker/beszel-agent:/var/lib/beszel-agent
+      - /srv/docker/beszel-socket:/beszel_socket
     restart: unless-stopped
-    networks:
-      - homelab
 
 networks:
   homelab:
