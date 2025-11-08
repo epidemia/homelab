@@ -3,7 +3,7 @@ services:
     container_name: beszel
     image: henrygd/beszel:0.15.4
     volumes:
-      - /srv/docker/beszel:/beszel-data
+      - /srv/docker/beszel:/beszel_data
     restart: unless-stopped
     networks:
       - homelab
@@ -21,7 +21,6 @@ services:
       - KEY=${BESZEL_AGENT_KEY}
       - TOKEN=${BESZEL_AGENT_TOKEN}
       - HUB_URL=http://beszel:8090
-      - LISTEN=45876
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /srv/docker/beszel-agent:/var/lib/beszel-agent
