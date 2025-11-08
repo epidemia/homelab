@@ -15,7 +15,7 @@ services:
       - homelab
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.home`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${BASE_URL}`)"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
 
 networks:

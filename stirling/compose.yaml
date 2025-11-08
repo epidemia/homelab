@@ -1,7 +1,7 @@
 services:
   stirling:
     container_name: stirling
-    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:1.5.0
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:${STIRLING_VERSION}
     volumes:
       - /srv/docker/stirling-pdf/trainingData:/usr/share/tessdata # Required for extra OCR languages
       - /srv/docker/stirling-pdf/extraConfigs:/configs
@@ -20,7 +20,7 @@ services:
       - SYSTEM_ENABLEANALYTICS=false
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.stirling.rule=Host(`stirling.home`)"
+      - "traefik.http.routers.stirling.rule=Host(`stirling.${BASE_URL}`)"
       - "traefik.http.services.stirling.loadbalancer.server.port=8080"
 
 networks:

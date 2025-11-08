@@ -1,13 +1,13 @@
 services:
   mazanoke:
     container_name: mazanoke
-    image: ghcr.io/civilblur/mazanoke:v1.1.5
+    image: ghcr.io/civilblur/mazanoke:${MAZANOKE_VERSION}
     restart: unless-stopped
     networks:
       - homelab
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mazanoke.rule=Host(`mazanoke.home`)"
+      - "traefik.http.routers.mazanoke.rule=Host(`mazanoke.${BASE_URL}`)"
       - "traefik.http.services.mazanoke.loadbalancer.server.port=80"
 
 networks:

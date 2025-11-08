@@ -1,24 +1,24 @@
 services:
   pihole-unbound:
     container_name: pihole-unbound
-    image: mpgirro/pihole-unbound:2025.11.0
+    image: mpgirro/pihole-unbound:${PIHOLE_UNBOUND_VERSION}
     ports:
       - "53:53/tcp"
       - "53:53/udp"
     environment:
-      TZ: "Europe/Amsterdam"
-      FTLCONF_dns_listeningMode: "all"
-      FTLCONF_dns_upstreams: "127.0.0.1#5335"
-      FTLCONF_dns_dnssec: "true"
+      - TZ=${TZ}
+      - FTLCONF_dns_listeningMode=all
+      - FTLCONF_dns_upstreams=127.0.0.1#5335
+      - FTLCONF_dns_dnssec=true
     volumes:
-      - "/srv/docker/pihole:/etc/pihole"
-      - "/srv/docker/pihole/dnsmasq:/etc/dnsmasq.d"
+      - /srv/docker/pihole:/etc/pihole
+      - /srv/docker/pihole/dnsmasq:/etc/dnsmasq.d
     restart: unless-stopped
     networks:
       - homelab
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.pihole.rule=Host(`pihole.home`)"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.${BASE_URL}`)"
       - "traefik.http.services.pihole.loadbalancer.server.port=80"
 
 networks:

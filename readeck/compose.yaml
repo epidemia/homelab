@@ -1,7 +1,7 @@
 services:
   readeck:
     container_name: readeck
-    image: codeberg.org/readeck/readeck:0.20.4
+    image: codeberg.org/readeck/readeck:${READECK_VERSION}
     depends_on:
       readeck-db:
         condition: service_healthy
@@ -16,7 +16,7 @@ services:
       - homelab
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.readeck.rule=Host(`readeck.home`)"
+      - "traefik.http.routers.readeck.rule=Host(`readeck.${BASE_URL}`)"
       - "traefik.http.services.readeck.loadbalancer.server.port=8000"
 
   readeck-db:

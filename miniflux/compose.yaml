@@ -1,7 +1,7 @@
 services:
   miniflux:
     container_name: miniflux
-    image: miniflux/miniflux:2.2.14
+    image: miniflux/miniflux:${MINIFLUX_VERSION}
     depends_on:
       miniflux-db:
         condition: service_healthy
@@ -13,7 +13,7 @@ services:
       - homelab
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.miniflux.rule=Host(`miniflux.home`)"
+      - "traefik.http.routers.miniflux.rule=Host(`miniflux.${BASE_URL}`)"
       - "traefik.http.services.miniflux.loadbalancer.server.port=8080"
 
   miniflux-db:
