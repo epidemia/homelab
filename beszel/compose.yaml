@@ -20,7 +20,7 @@ services:
     environment:
       - KEY=${BESZEL_AGENT_KEY}
       - TOKEN=${BESZEL_AGENT_TOKEN}
-      - HUB_URL=http://localhost:8090
+      - HUB_URL=http://beszel:8090
       - LISTEN=45876
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
