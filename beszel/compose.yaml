@@ -11,6 +11,23 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.beszel.rule=Host(`beszel.home`)"
       - "traefik.http.services.beszel.loadbalancer.server.port=8090"
+      
+  beszel-agent:
+    container_name: beszel-agent
+    image: henrygd/beszel-agent:0.15.4
+    depends_on:
+      - beszel
+    environment:
+      - KEY=${BESZEL_AGENT_KEY}
+      - TOKEN=${BESZEL_AGENT_TOKEN}
+      - HUB_URL=http://localhost:8090
+      - LISTEN=45876
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /srv/docker/beszel-agent:/var/lib/beszel-agent
+    restart: unless-stopped
+    networks:
+      - homelab
 
 networks:
   homelab:
