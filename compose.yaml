@@ -5,3 +5,4 @@ include:
   - miniflux/compose.yaml
   - mazanoke/compose.yaml
   - readeck/compose.yaml
+  - beszel/compose.yaml

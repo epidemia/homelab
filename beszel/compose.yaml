@@ -1,0 +1,17 @@
+services:
+  beszel:
+    image: henrygd/beszel:${BESZEL_VERSION}
+    container_name: beszel
+    restart: unless-stopped
+    volumes:
+      - /srv/docker/beszel:/beszel_data
+    networks:
+      - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.beszel.rule=Host(`beszel.${BASE_URL}`)"
+      - "traefik.http.services.beszel.loadbalancer.server.port=8090"
+
+networks:
+  homelab:
+    external: true
