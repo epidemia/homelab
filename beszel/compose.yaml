@@ -5,8 +5,11 @@ services:
     restart: unless-stopped
     volumes:
       - /srv/docker/beszel:/beszel_data
+      - /srv/docker/beszel/socket:/beszel_socket
     networks:
       - homelab
+    environment:
+      - APP_URL=http://beszel.${BASE_URL}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.beszel.rule=Host(`beszel.${BASE_URL}`)"
