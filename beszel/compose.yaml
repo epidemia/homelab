@@ -8,12 +8,33 @@ services:
       - /srv/docker/beszel/socket:/beszel_socket
     networks:
       - homelab
-    environment:
-      - APP_URL=http://beszel.${BASE_URL}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.beszel.rule=Host(`beszel.${BASE_URL}`)"
       - "traefik.http.services.beszel.loadbalancer.server.port=8090"
+    healthcheck:
+      test: ["CMD", "/beszel", "health", "--url", "http://localhost:8090"]
+      start_period: 5s
+      interval: 120s
+
+  beszel-agent:
+    image: henrygd/beszel-agent:${BESZEL_VERSION}
+    container_name: beszel-agent
+    restart: unless-stopped
+    networks:
+      - homelab
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /srv/docker/beszel-agent:/var/lib/beszel-agent
+      - /srv/docker/beszel/socket-agent:/beszel_socket
+    environment:
+      LISTEN: /beszel_socket/beszel.sock
+      KEY: ${BESZEL_AGENT_KEY}
+      TOKEN: ${BESZEL_AGENT_TOKEN}
+      HUB_URL: http://beszel:8090
+    healthcheck:
+      test: ["CMD", "/agent", "health"]
+      interval: 120s
 
 networks:
   homelab:
