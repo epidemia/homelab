@@ -6,4 +6,3 @@ include:
   - mazanoke/compose.yaml
   - readeck/compose.yaml
   - beszel/compose.yaml
-  - backrest/compose.yaml
