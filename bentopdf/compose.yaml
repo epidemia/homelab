@@ -1,6 +1,6 @@
 services:
   bentopdf:
-    image: bentopdf/bentopdf:${BENTOPDF_VERSION}
+    image: bentopdf/bentopdf-simple:${BENTOPDF_VERSION}
     container_name: bentopdf
     restart: unless-stopped
     networks:
