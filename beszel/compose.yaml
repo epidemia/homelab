@@ -3,6 +3,9 @@ services:
     image: henrygd/beszel:${BESZEL_VERSION}
     container_name: beszel
     restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 64m
+    cpus: 0.25
     volumes:
       - /srv/docker/beszel:/beszel_data
       - /srv/docker/beszel/socket:/beszel_socket
@@ -21,6 +24,9 @@ services:
     image: henrygd/beszel-agent:${BESZEL_VERSION}
     container_name: beszel-agent
     restart: unless-stopped
+    mem_limit: 128m
+    mem_reservation: 32m
+    cpus: 0.1
     networks:
       - homelab
     volumes:

@@ -14,6 +14,9 @@ services:
       - /srv/docker/pihole:/etc/pihole
       - /srv/docker/pihole/dnsmasq:/etc/dnsmasq.d
     restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 0.5
     networks:
       - homelab
     labels:

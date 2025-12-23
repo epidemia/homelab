@@ -12,6 +12,9 @@ services:
     volumes:
       - /srv/docker/readeck:/readeck
     restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 0.25
     networks:
       - homelab
     labels:
@@ -33,6 +36,9 @@ services:
       interval: 10s
       start_period: 30s
     restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 0.5
     networks:
       - homelab
 

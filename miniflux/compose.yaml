@@ -9,6 +9,9 @@ services:
       - DATABASE_URL=postgres://${MINIFLUX_POSTGRES_USER}:${MINIFLUX_POSTGRES_PASSWORD}@miniflux-db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1
     restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 64m
+    cpus: 0.25
     networks:
       - homelab
     labels:
@@ -30,6 +33,9 @@ services:
       interval: 10s
       start_period: 30s
     restart: unless-stopped
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 0.5
     networks:
       - homelab
 
