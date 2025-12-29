@@ -15,6 +15,12 @@ services:
     mem_limit: 512m
     mem_reservation: 128m
     cpus: 0.25
+    healthcheck:
+      test: ["CMD", "/bin/readeck", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - homelab
     labels:
