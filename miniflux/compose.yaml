@@ -20,6 +20,7 @@ services:
       start_period: 10s
     networks:
       - homelab
+      - miniflux-backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.miniflux.rule=Host(`miniflux.${BASE_URL}`)"
@@ -43,8 +44,10 @@ services:
     mem_reservation: 128m
     cpus: 0.5
     networks:
-      - homelab
+      - miniflux-backend
 
 networks:
   homelab:
     external: true
+  miniflux-backend:
+    internal: true

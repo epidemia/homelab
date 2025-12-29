@@ -23,6 +23,7 @@ services:
       start_period: 10s
     networks:
       - homelab
+      - readeck-backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.readeck.rule=Host(`readeck.${BASE_URL}`)"
@@ -46,8 +47,10 @@ services:
     mem_reservation: 128m
     cpus: 0.5
     networks:
-      - homelab
+      - readeck-backend
 
 networks:
   homelab:
     external: true
+  readeck-backend:
+    internal: true
