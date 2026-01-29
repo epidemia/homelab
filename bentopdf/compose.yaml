@@ -1,6 +1,6 @@
 services:
   bentopdf:
-    image: bentopdf/bentopdf-simple:${BENTOPDF_VERSION}
+    image: ghcr.io/alam00000/bentopdf-simple:${BENTOPDF_VERSION}
     container_name: bentopdf
     restart: unless-stopped
     mem_limit: 1g
