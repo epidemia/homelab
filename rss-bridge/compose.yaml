@@ -1,0 +1,24 @@
+services:
+  rss-bridge:
+    container_name: rss-bridge
+    image: rssbridge/rss-bridge:${RSS_BRIDGE_VERSION}
+    restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 64m
+    cpus: 0.25
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rss-bridge.rule=Host(`rss-bridge.${BASE_URL}`)"
+      - "traefik.http.services.rss-bridge.loadbalancer.server.port=80"
+
+networks:
+  homelab:
+    external: true
