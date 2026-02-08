@@ -17,6 +17,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bentopdf.rule=Host(`bentopdf.${BASE_URL}`)"
+      - "traefik.http.routers.bentopdf.entrypoints=websecure"
+      - "traefik.http.routers.bentopdf.tls=true"
+      - "traefik.http.routers.bentopdf.tls.certresolver=letsencrypt"
       - "traefik.http.services.bentopdf.loadbalancer.server.port=8080"
 
 networks:

@@ -27,6 +27,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.readeck.rule=Host(`readeck.${BASE_URL}`)"
+      - "traefik.http.routers.readeck.entrypoints=websecure"
+      - "traefik.http.routers.readeck.tls=true"
+      - "traefik.http.routers.readeck.tls.certresolver=letsencrypt"
       - "traefik.http.services.readeck.loadbalancer.server.port=8000"
 
   readeck-db:

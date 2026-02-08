@@ -14,6 +14,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.beszel.rule=Host(`beszel.${BASE_URL}`)"
+      - "traefik.http.routers.beszel.entrypoints=websecure"
+      - "traefik.http.routers.beszel.tls=true"
+      - "traefik.http.routers.beszel.tls.certresolver=letsencrypt"
       - "traefik.http.services.beszel.loadbalancer.server.port=8090"
     healthcheck:
       test: ["CMD", "/beszel", "health", "--url", "http://localhost:8090"]
