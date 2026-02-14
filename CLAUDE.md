@@ -41,6 +41,7 @@ systemctl status restic-backup.timer
 | beszel + agent | 8090 | - | System monitoring |
 | mazanoke | 80 | - | Image optimization |
 | bentopdf | 8080 | - | PDF generation |
+| pocket-id | 1411 | SQLite | Passkey OIDC provider |
 
 ### Routing Pattern
 All services are exposed via Traefik at `<service>.${BASE_URL}` using Docker labels in their compose files.

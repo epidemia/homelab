@@ -8,6 +8,13 @@ services:
     environment:
       - DATABASE_URL=postgres://${MINIFLUX_POSTGRES_USER}:${MINIFLUX_POSTGRES_PASSWORD}@miniflux-db/miniflux?sslmode=disable
       - RUN_MIGRATIONS=1
+      - OAUTH2_PROVIDER=oidc
+      - OAUTH2_CLIENT_ID=${MINIFLUX_OAUTH2_CLIENT_ID}
+      - OAUTH2_CLIENT_SECRET=${MINIFLUX_OAUTH2_CLIENT_SECRET}
+      - OAUTH2_REDIRECT_URL=https://miniflux.${BASE_URL}/oauth2/oidc/callback
+      - OAUTH2_OIDC_DISCOVERY_ENDPOINT=https://id.${BASE_URL}
+      - OAUTH2_USER_CREATION=1
+      - OAUTH2_OIDC_PROVIDER_NAME=Pocket ID
     restart: unless-stopped
     mem_limit: 256m
     mem_reservation: 64m
