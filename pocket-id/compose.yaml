@@ -13,7 +13,7 @@ services:
     mem_reservation: 64m
     cpus: 0.25
     healthcheck:
-      test: ["CMD", "healthcheck"]
+      test: ["CMD", "/app/pocket-id", "healthcheck"]
       interval: 90s
       timeout: 5s
       retries: 2
