@@ -46,7 +46,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Secret=${OIDC_SECRET}"
-      - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Provider.Url=https://id.${BASE_URL}"
+      - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Provider.Url=http://pocket-id:1411"
       - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Provider.ClientId=${OIDC_CLIENT_ID}"
       - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Provider.ClientSecret=${OIDC_CLIENT_SECRET}"
       - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Scopes=openid,profile,email"
