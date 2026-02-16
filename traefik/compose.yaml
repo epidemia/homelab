@@ -19,9 +19,6 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53"
-      # OIDC auth plugin
-      - "--experimental.plugins.traefik-oidc-auth.modulename=github.com/sevensolutions/traefik-oidc-auth"
-      - "--experimental.plugins.traefik-oidc-auth.version=v0.18.0"
     environment:
       - CF_API_EMAIL=${CF_API_EMAIL}
       - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
@@ -42,16 +39,7 @@ services:
       retries: 3
       start_period: 10s
     networks:
-      homelab:
-        aliases:
-          - id.${BASE_URL}
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Secret=${OIDC_SECRET}"
-      - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Provider.Url=http://pocket-id:1411"
-      - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Provider.ClientId=${OIDC_CLIENT_ID}"
-      - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Provider.ClientSecret=${OIDC_CLIENT_SECRET}"
-      - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Scopes=openid,profile,email"
+      - homelab
 
 networks:
   homelab:

@@ -6,4 +6,3 @@ include:
   - readeck/compose.yaml
   - beszel/compose.yaml
   - bentopdf/compose.yaml
-  - pocket-id/compose.yaml

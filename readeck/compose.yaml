@@ -30,7 +30,6 @@ services:
       - "traefik.http.routers.readeck.entrypoints=websecure"
       - "traefik.http.routers.readeck.tls=true"
       - "traefik.http.routers.readeck.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.readeck.middlewares=oidc-auth@docker"
       - "traefik.http.services.readeck.loadbalancer.server.port=8000"
 
   readeck-db:

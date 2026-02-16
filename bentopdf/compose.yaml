@@ -20,7 +20,6 @@ services:
       - "traefik.http.routers.bentopdf.entrypoints=websecure"
       - "traefik.http.routers.bentopdf.tls=true"
       - "traefik.http.routers.bentopdf.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.bentopdf.middlewares=oidc-auth@docker"
       - "traefik.http.services.bentopdf.loadbalancer.server.port=8080"
 
 networks:

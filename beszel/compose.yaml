@@ -3,8 +3,6 @@ services:
     image: henrygd/beszel:${BESZEL_VERSION}
     container_name: beszel
     restart: unless-stopped
-    environment:
-      - USER_CREATION=false
     mem_limit: 256m
     mem_reservation: 64m
     cpus: 0.25
