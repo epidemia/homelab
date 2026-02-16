@@ -42,7 +42,9 @@ services:
       retries: 3
       start_period: 10s
     networks:
-      - homelab
+      homelab:
+        aliases:
+          - id.${BASE_URL}
     labels:
       - "traefik.enable=true"
       - "traefik.http.middlewares.oidc-auth.plugin.traefik-oidc-auth.Secret=${OIDC_SECRET}"
