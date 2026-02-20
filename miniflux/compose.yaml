@@ -28,6 +28,7 @@ services:
       - "traefik.http.routers.miniflux.tls=true"
       - "traefik.http.routers.miniflux.tls.certresolver=letsencrypt"
       - "traefik.http.services.miniflux.loadbalancer.server.port=8080"
+      - "traefik.docker.network=homelab"
 
   miniflux-db:
     container_name: miniflux-db

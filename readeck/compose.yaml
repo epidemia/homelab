@@ -31,6 +31,7 @@ services:
       - "traefik.http.routers.readeck.tls=true"
       - "traefik.http.routers.readeck.tls.certresolver=letsencrypt"
       - "traefik.http.services.readeck.loadbalancer.server.port=8000"
+      - "traefik.docker.network=homelab"
 
   readeck-db:
     container_name: readeck-db
