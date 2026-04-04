@@ -27,6 +27,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    extra_hosts:
+      # Route Pocket ID discovery/token requests back through local Traefik.
+      - "id.${BASE_URL}:host-gateway"
     networks:
       - homelab
       - miniflux-backend
