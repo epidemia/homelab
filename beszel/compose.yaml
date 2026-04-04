@@ -3,6 +3,9 @@ services:
     image: henrygd/beszel:${BESZEL_VERSION}
     container_name: beszel
     restart: unless-stopped
+    environment:
+      APP_URL: https://beszel.${BASE_URL}
+      DISABLE_PASSWORD_AUTH: ${BESZEL_DISABLE_PASSWORD_AUTH}
     mem_limit: 256m
     mem_reservation: 64m
     cpus: 0.25
@@ -18,6 +21,7 @@ services:
       - "traefik.http.routers.beszel.tls=true"
       - "traefik.http.routers.beszel.tls.certresolver=letsencrypt"
       - "traefik.http.services.beszel.loadbalancer.server.port=8090"
+      - "traefik.docker.network=homelab"
     healthcheck:
       test: ["CMD", "/beszel", "health", "--url", "http://localhost:8090"]
       start_period: 5s
