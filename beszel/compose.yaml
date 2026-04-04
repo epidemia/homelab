@@ -6,6 +6,7 @@ services:
     environment:
       APP_URL: https://beszel.${BASE_URL}
       DISABLE_PASSWORD_AUTH: ${BESZEL_DISABLE_PASSWORD_AUTH}
+      USER_CREATION: ${BESZEL_USER_CREATION}
     mem_limit: 256m
     mem_reservation: 64m
     cpus: 0.25
