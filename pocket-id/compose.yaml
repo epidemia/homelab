@@ -27,6 +27,7 @@ services:
       - "traefik.http.routers.pocket-id.tls=true"
       - "traefik.http.routers.pocket-id.tls.certresolver=letsencrypt"
       - "traefik.http.services.pocket-id.loadbalancer.server.port=1411"
+      - "traefik.docker.network=homelab"
 
 networks:
   homelab:

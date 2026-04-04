@@ -1,6 +1,7 @@
 include:
   - pihole-unbound/compose.yaml
   - traefik/compose.yaml
+  - pocket-id/compose.yaml
   - miniflux/compose.yaml
   - mazanoke/compose.yaml
   - readeck/compose.yaml
