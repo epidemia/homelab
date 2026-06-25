@@ -2,11 +2,8 @@ services:
   readeck:
     container_name: readeck
     image: codeberg.org/readeck/readeck:${READECK_VERSION}
-    depends_on:
-      readeck-db:
-        condition: service_healthy
     environment:
-      - READECK_DATABASE_SOURCE=postgres://${READECK_POSTGRES_USER}:${READECK_POSTGRES_PASSWORD}@readeck-db/readeck?sslmode=disable
+      - READECK_DATABASE_SOURCE=sqlite3:/readeck/data/db.sqlite3
       - READECK_LOG_LEVEL=info
       - READECK_LOG_FORMAT=text
     volumes:
@@ -23,7 +20,6 @@ services:
       start_period: 10s
     networks:
       - homelab
-      - readeck-backend
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.readeck.rule=Host(`readeck.${BASE_URL}`)"
@@ -33,28 +29,6 @@ services:
       - "traefik.http.services.readeck.loadbalancer.server.port=8000"
       - "traefik.docker.network=homelab"
 
-  readeck-db:
-    container_name: readeck-db
-    image: postgres:17-alpine
-    environment:
-      - POSTGRES_USER=${READECK_POSTGRES_USER}
-      - POSTGRES_PASSWORD=${READECK_POSTGRES_PASSWORD}
-      - POSTGRES_DB=readeck
-    volumes:
-      - /srv/docker/readeck-db:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${READECK_POSTGRES_USER}"]
-      interval: 10s
-      start_period: 30s
-    restart: unless-stopped
-    mem_limit: 512m
-    mem_reservation: 128m
-    cpus: 0.5
-    networks:
-      - readeck-backend
-
 networks:
   homelab:
     external: true
-  readeck-backend:
-    internal: true
