@@ -4,8 +4,8 @@ This guide explains how to recover your homelab on a **new machine** from a `res
 
 You will restore:
 
-- Service files under **`/srv/docker`** (state/configs for your containers, except raw Postgres PGDATA which we deliberately exclude).
-- Postgres logical dumps under **`/srv/backups/pg`**:
+- Service files under **`/srv/docker`** (state/configs for your containers, including Readeck's SQLite database, except raw Postgres PGDATA which we deliberately exclude).
+- Postgres logical dumps under **`/srv/backups/pg`** for Miniflux:
   `*-globals-<timestamp>.sql.gz` (roles/tablespaces) and `*-<dbname>-<timestamp>.sql.gz` (each database).
 
 > **Important:** This setup keeps **current state** only (the last 1–2 snapshots). You will recover to the exact state at the time of the **most recent nightly backup**.
@@ -21,7 +21,7 @@ You will restore:
   (If your bucket uses a region subdomain, use `https://<ACCOUNT_ID>.<region>.r2.cloudflarestorage.com/<bucket>/<prefix>`; region is typically `eu` for EU buckets.)
 - Either `RESTIC_PASSWORD` **or** `RESTIC_PASSWORD_FILE` (restic will pick up one of them).
 - Your Git repository with your Docker Compose files.
-- Prefer using the **same major PostgreSQL version** as in your backups (you use **Postgres 17**; `postgres:17-alpine` is a good image).
+- Prefer using the **same major PostgreSQL version** as in your Miniflux backups (you use **Postgres 17**; `postgres:17-alpine` is a good image).
 
 ---
 
@@ -103,63 +103,54 @@ sudo -E bash -c '. /etc/restic/restic.env; restic $RESTIC_OPTIONS restore latest
 
 ---
 
-## 4) Start **only** the Postgres containers and wait for readiness
+## 4) Start the Miniflux Postgres container and wait for readiness
 
 From the directory where your Compose files live:
 
 ```bash
-docker compose up -d miniflux-db readeck-db
+docker compose up -d miniflux-db
 
 # Wait until Postgres is ready to accept connections:
 docker exec miniflux-db sh -lc 'until pg_isready -U "${POSTGRES_USER:-postgres}"; do sleep 1; done'
-docker exec readeck-db  sh -lc 'until pg_isready -U "${POSTGRES_USER:-postgres}"; do sleep 1; done'
 ```
 
-> If your DB container names differ, substitute them accordingly.
+> Readeck uses SQLite and is restored with `/srv/docker/readeck`; it does not need a separate database import.
 
 ---
 
-## 5) Import `globals` and per-DB dumps
+## 5) Import Miniflux `globals` and database dumps
 
 **What are `globals`?** They are Postgres-wide objects: **roles (including passwords/attributes/memberships)** and **tablespaces**. Restore them **before** importing databases so owners and GRANTs apply correctly.
 
 ### Automated import of the most recent files
 
 ```bash
-# Restore globals for each DB container (pick the latest file)
-for c in miniflux-db readeck-db; do
-  f=$(ls -1t /srv/backups/pg/${c}-globals-*.sql.gz | head -n1)
-  [ -n "$f" ] || { echo "No globals dump for $c"; exit 1; }
-  echo "Importing globals: $f"
-  gzip -dc "$f" | docker exec -i "$c" psql -U postgres -d postgres
-done
+c=miniflux-db
 
-# Restore each database (pick the latest per-DB dump for each DB name)
-for c in miniflux-db readeck-db; do
-  for f in $(ls -1t /srv/backups/pg/${c}-*-*.sql.gz | grep -v -- '-globals-'); do
-    db=$(basename "$f" | sed -E "s/^${c}-([^-]+)-.*\.sql\.gz/\1/")
-    echo "Importing DB $db for $c : $f"
-    docker exec "$c" createdb -U postgres "$db" 2>/dev/null || true
-    gzip -dc "$f" | docker exec -i "$c" psql -U postgres -d "$db"
-  done
+# Restore globals for Miniflux (pick the latest file)
+f=$(ls -1t /srv/backups/pg/${c}-globals-*.sql.gz | head -n1)
+[ -n "$f" ] || { echo "No globals dump for $c"; exit 1; }
+echo "Importing globals: $f"
+gzip -dc "$f" | docker exec -i "$c" psql -U postgres -d postgres
+
+# Restore each Miniflux database dump
+for f in $(ls -1t /srv/backups/pg/${c}-*-*.sql.gz | grep -v -- '-globals-'); do
+  db=$(basename "$f" | sed -E "s/^${c}-([^-]+)-.*\.sql\.gz/\1/")
+  echo "Importing DB $db for $c : $f"
+  docker exec "$c" createdb -U postgres "$db" 2>/dev/null || true
+  gzip -dc "$f" | docker exec -i "$c" psql -U postgres -d "$db"
 done
 ```
 
-### Manual import (one DB example)
+### Manual import
 
 ```bash
-# miniflux
 gzip -dc /srv/backups/pg/miniflux-db-globals-<timestamp>.sql.gz | docker exec -i miniflux-db psql -U postgres -d postgres
 docker exec miniflux-db createdb -U postgres miniflux || true
 gzip -dc /srv/backups/pg/miniflux-db-miniflux-<timestamp>.sql.gz | docker exec -i miniflux-db psql -U postgres -d miniflux
-
-# readeck
-gzip -dc /srv/backups/pg/readeck-db-globals-<timestamp>.sql.gz | docker exec -i readeck-db psql -U postgres -d postgres
-docker exec readeck-db createdb -U postgres readeck || true
-gzip -dc /srv/backups/pg/readeck-db-readeck-<timestamp>.sql.gz | docker exec -i readeck-db psql -U postgres -d readeck
 ```
 
-> If your container or database names differ, adjust accordingly.
+> Readeck's SQLite database is restored as `/srv/docker/readeck/data/db.sqlite3` together with the rest of `/srv/docker/readeck`.
 
 ---
 
@@ -171,7 +162,7 @@ docker ps
 
 # Quick checks:
 docker exec miniflux-db psql -U postgres -d miniflux -c 'SELECT COUNT(*) FROM entries;'
-docker exec readeck-db  psql -U postgres -d readeck  -c '\dt'
+docker compose exec -T readeck /bin/readeck healthcheck
 
 # App logs (migrations/initialization):
 docker compose logs --no-log-prefix -n 100 miniflux

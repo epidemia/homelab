@@ -35,7 +35,7 @@ mkdir -p "$PG_DUMPS" "$LOG_DIR"
 echo "[$(date -Is)] Starting backup…"
 
 # Optional: explicit list of Postgres containers via env (space-separated),
-# e.g. in /etc/restic/restic.env:  export PG_CONTAINERS="miniflux-db readeck-db"
+# e.g. in /etc/restic/restic.env:  export PG_CONTAINERS="miniflux-db"
 : "${PG_CONTAINERS:=}"
 
 # How many days of local dumps to keep (1 = only "today")
