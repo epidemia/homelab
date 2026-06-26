@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository defines a Docker Compose homelab. The root [`compose.yaml`](/Users/andreimochalov/Projects/homelab/compose.yaml) aggregates service stacks from `traefik/`, `pihole-unbound/`, `miniflux/`, `readeck/`, `beszel/`, `mazanoke/`, and `bentopdf/`. Each service directory owns its own `compose.yaml`; keep service-specific networks, labels, and volumes there. The [`restic/`](/Users/andreimochalov/Projects/homelab/restic) directory contains backup automation, systemd units, and restore documentation. Use [`.env.example`](/Users/andreimochalov/Projects/homelab/.env.example) as the template for local `.env`.
+This repository defines a Docker Compose homelab. The root [`compose.yaml`](/Users/andreimochalov/Projects/homelab/compose.yaml) aggregates service stacks from `traefik/`, `pihole-unbound/`, `pocket-id/`, `miniflux/`, `readeck/`, `beszel/`, `mazanoke/`, and `bentopdf/`. Each service directory owns its own `compose.yaml`; keep service-specific networks, labels, and volumes there. Miniflux uses PostgreSQL via `miniflux-db`; Readeck uses SQLite stored under `/srv/docker/readeck`. The [`restic/`](/Users/andreimochalov/Projects/homelab/restic) directory contains backup automation, systemd units, and restore documentation. Use [`.env.example`](/Users/andreimochalov/Projects/homelab/.env.example) as the template for local `.env`.
 
 ## Build, Test, and Development Commands
 `cp .env.example .env` creates the required environment file.
