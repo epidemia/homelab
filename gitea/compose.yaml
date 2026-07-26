@@ -14,6 +14,7 @@ services:
       - GITEA__repository__FORCE_PRIVATE=true
       - GITEA__service__REQUIRE_SIGNIN_VIEW=true
       - GITEA__service__DISABLE_REGISTRATION=true
+      - GITEA__service__ENABLE_PASSWORD_SIGNIN_FORM=false
     volumes:
       - /srv/docker/gitea:/data
       - /etc/timezone:/etc/timezone:ro
