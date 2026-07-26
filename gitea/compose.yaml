@@ -1,0 +1,45 @@
+services:
+  gitea:
+    container_name: gitea
+    image: docker.gitea.com/gitea:${GITEA_VERSION}
+    restart: unless-stopped
+    environment:
+      - USER_UID=${GITEA_UID}
+      - USER_GID=${GITEA_GID}
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea/gitea.db
+      - GITEA__server__ROOT_URL=https://git.${BASE_URL}/
+      - GITEA__server__SSH_DOMAIN=git.${BASE_URL}
+      - GITEA__server__SSH_PORT=${GITEA_SSH_PORT}
+      - GITEA__repository__FORCE_PRIVATE=true
+      - GITEA__service__REQUIRE_SIGNIN_VIEW=true
+      - GITEA__service__DISABLE_REGISTRATION=true
+    volumes:
+      - /srv/docker/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "${GITEA_SSH_PORT}:22"
+    mem_limit: 512m
+    mem_reservation: 128m
+    cpus: 0.5
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:3000/api/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - homelab
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gitea.rule=Host(`git.${BASE_URL}`)"
+      - "traefik.http.routers.gitea.entrypoints=websecure"
+      - "traefik.http.routers.gitea.tls=true"
+      - "traefik.http.routers.gitea.tls.certresolver=letsencrypt"
+      - "traefik.http.services.gitea.loadbalancer.server.port=3000"
+      - "traefik.docker.network=homelab"
+
+networks:
+  homelab:
+    external: true
