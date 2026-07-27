@@ -18,11 +18,14 @@ services:
       - GITEA__repository__DISABLE_DOWNLOAD_SOURCE_ARCHIVES=true
       - GITEA__service__REQUIRE_SIGNIN_VIEW=true
       - GITEA__service__DISABLE_REGISTRATION=true
+      - GITEA__service__DEFAULT_ALLOW_CREATE_ORGANIZATION=false
       - GITEA__service__ENABLE_PASSWORD_SIGNIN_FORM=false
       - GITEA__service__ENABLE_BASIC_AUTHENTICATION=false
       - GITEA__service__ENABLE_PASSKEY_AUTHENTICATION=false
       - GITEA__openid__ENABLE_OPENID_SIGNIN=false
       - GITEA__openid__ENABLE_OPENID_SIGNUP=false
+      - GITEA__admin__DISABLE_REGULAR_ORG_CREATION=true
+      - GITEA__service.explore__DISABLE_ORGANIZATIONS_PAGE=true
       - GITEA__actions__ENABLED=false
       - GITEA__attachment__ENABLED=false
       - GITEA__mirror__ENABLED=false
